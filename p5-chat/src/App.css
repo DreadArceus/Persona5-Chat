@@ -1,0 +1,12 @@
+@font-face {
+  font-family: "P5";
+  src: local("P5"), url(./fonts/P5/main.ttf) format("truetype");
+}
+.App {
+  text-align: center;
+  background-color: black;
+}
+.heading {
+  font-size: 80px;
+  font-family: P5;
+}
