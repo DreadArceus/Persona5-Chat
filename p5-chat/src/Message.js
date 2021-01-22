@@ -20,22 +20,6 @@ const Message = (props) => {
     }
     return;
   };
-  //   const styles = {
-  //     float: props.align,
-  //     textAlign: "left",
-  //     backgroundColor: `${props.align === "left" ? "black" : "white"}`,
-  //     borderTop: `4px solid ${props.align === "left" ? "white" : "black"}`,
-  //     borderBottom: `4px solid ${props.align === "left" ? "white" : "black"}`,
-  //     borderLeft: `4px solid black`,
-  //     borderRight: `4px solid white`,
-  //     transform: `${props.align === "left" ? "rotate(5deg)" : "rotate(-5deg)"}`,
-  //     paddingTop: "5px",
-  //     paddingBottom: "5px",
-  //     paddingLeft: "10px",
-  //     color: `${props.align === "left" ? "white" : "black"}`,
-  //     width: "150px",
-  //     clear: `${props.align === "left" ? "right" : "left"}`,
-  //   };
   const lightining_style = {
     float: props.align,
     transform: `${props.align === "left" ? "" : "scaleX(-1)"}`,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useForm } from "react-hook-form";
 import socketIOClient from "socket.io-client";
 import Message from "./Message";
 const ENDPOINT = "http://127.0.0.1:8000";
@@ -13,7 +14,8 @@ const getKey = () => {
 };
 
 const chatbox_style = {
-  display: "block",
+  display: "flex",
+  flexDirection: "column-reverse",
   margin: "auto",
   width: "1000px",
   height: "485px",
@@ -21,7 +23,7 @@ const chatbox_style = {
   border: "2px solid white",
   borderRadius: "20px",
   padding: "20px",
-  overflowY: "scroll",
+  overflowY: "auto",
 };
 
 const input_style = {
@@ -47,20 +49,25 @@ const send_btn = {
 };
 
 const Chat = () => {
-  const [msg, setMsg] = useState("");
+  const { register, handleSubmit, errors, setValue } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(errors);
+    socket.emit("send-message", data.msg);
+    createMessage(data.msg, "right");
+    setValue("msg", "", { shouldValidate: false });
+  };
+
   const [history, setHistory] = useState([]);
   const createMessage = useCallback((msg, align) => {
     setHistory((old_history) => {
-      old_history.push(<Message text={msg} align={align} key={getKey()} />);
       console.log(old_history);
-      return old_history;
+      return [
+        ...old_history,
+        <Message text={msg} align={align} key={getKey()} />,
+      ];
     });
   }, []);
-  const send_msg = useCallback((event) => {
-    event.preventDefault();
-    socket.emit("send-message", msg);
-    createMessage(msg, "right");
-  }, [createMessage, msg]);
   useEffect(() => {
     socket = socketIOClient(ENDPOINT, { transports: ["websocket"] });
     socket.emit("new-user-joined", "bruh");
@@ -75,30 +82,26 @@ const Chat = () => {
     });
     return () => socket.disconnect();
   }, [createMessage]);
-  // const getChat = useCallback(() => {
-  //   return <div style={chatbox_style}>{history}</div>;
-  // }, [history]);
   const getChat = () => {
-    return <div style={chatbox_style}>{history}</div>;
+    return (
+      <div style={chatbox_style}>
+        <div>{history}</div>
+      </div>
+    );
   };
   return (
     <div>
       {getChat()}
       <div style={input_style}>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <input
+            name="msg"
             style={input_box}
-            onChange={(event) => {
-              setMsg(event.target.value);
-            }}
-          ></input>
-          <input
-            value="Send"
-            type="submit"
-            style={send_btn}
-            onClick={(event) => send_msg(event)}
-          >
-          </input>
+            type="text"
+            placeholder="Enter Message"
+            ref={register({ required: true, maxLength: 80 })}
+          />
+          <input style={send_btn} type="submit" value="send" />
         </form>
       </div>
     </div>
